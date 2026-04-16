@@ -3255,7 +3255,7 @@ p {
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
-    padding-top: 0px;
+    padding-top: -30px;
     gap: 2rem;
     opacity: 0;
     pointer-events: none;
