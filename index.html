@@ -302,6 +302,30 @@ body {
 
 
 /* ═══════════════════════════════════════════════════
+   LAYER 0 — Google Search Page / 搜尋入口頁
+   ═══════════════════════════════════════════════════ */
+#googlePage {
+  position: absolute; inset: 0;
+  z-index: 200;
+  overflow: hidden;
+  background: #1a1a1a;
+  transition: opacity 0.45s ease;
+}
+#googlePage img {
+  width: 100%; height: 100%;
+  object-fit: cover; object-position: top;
+  display: block;
+}
+/* 透明點擊熱區 — 蓋住第一筆搜尋結果 */
+#googleResultBtn {
+  position: absolute;
+  top: 19%; left: 0;
+  width: 100%; height: 15%;
+  cursor: pointer;
+}
+
+
+/* ═══════════════════════════════════════════════════
    LAYER 5 — Splash / 開場畫面
    ═══════════════════════════════════════════════════ */
 .splash {
@@ -419,6 +443,14 @@ body {
 <div class="phone" id="phone">
 
 
+  <!-- ══════════════════════════════════
+       LAYER 0 — Google Search Page
+       ══════════════════════════════════ -->
+  <div id="googlePage">
+    <img src="images/startpage.png" alt="Google 搜尋結果">
+    <!-- 點擊熱區：第一筆搜尋結果「智能客服小玉 - 玉山銀行」 -->
+    <div id="googleResultBtn" aria-label="智能客服小玉 - 玉山銀行" role="button" tabindex="0"></div>
+  </div>
 
 
   <!-- ══════════════════════════════════
@@ -459,10 +491,10 @@ body {
     <div class="top-menu__card">
       <div class="top-menu__list">
 
-        <div class="top-menu__item" style="padding-top: 17px;">
+        <!-- <div class="top-menu__item" style="padding-top: 17px;">
           <img class="top-menu__item-icon" src="./images/top-menu__item-icon-star.svg" alt="">
           <span class="top-menu__item-text">給小玉評分與鼓勵</span>
-        </div>
+        </div> -->
 
         <div class="top-menu__item top-menu__item--bordered">
           <img class="top-menu__item-icon" src="./images/top-menu__item-icon-eg.svg" alt="">
@@ -644,6 +676,8 @@ body {
 
   var phase = 0; // 0:splash 1:topMenu 2:login 3:sunrise
 
+  var googlePage     = document.getElementById('googlePage');
+  var googleResultBtn = document.getElementById('googleResultBtn');
   var splash        = document.getElementById('splash');
   var topBar        = document.getElementById('topBar');
   var topMenuOverlay = document.getElementById('topMenuOverlay');
@@ -654,6 +688,26 @@ body {
   var cancelBtn     = document.getElementById('cancelBtn');
   var confirmBtn    = document.getElementById('confirmBtn');
   var pageOverlay   = document.getElementById('pageOverlay');
+
+  /* ── Step 0: Google page → tap result → show splash ── */
+  var splashStartTime = Date.now(); // splash animations begin on DOM load
+
+  function dismissGooglePage() {
+    googlePage.style.opacity = '0';
+    setTimeout(function () {
+      googlePage.style.display = 'none';
+    }, 450);
+
+    // 計算 splash 已播放時間，給剩餘時間（最少 2s）
+    var elapsed   = Date.now() - splashStartTime;
+    var remaining = Math.max(2000, 6700 - elapsed);
+    setTimeout(advanceFromSplash, remaining);
+  }
+
+  googleResultBtn.addEventListener('click', dismissGooglePage);
+  googleResultBtn.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter' || e.key === ' ') dismissGooglePage();
+  });
 
   /* ── Step 1: Splash → open top menu (auto or tap) ── */
   function advanceFromSplash() {
@@ -678,10 +732,7 @@ body {
     }, 550);
   }
 
-  // 動畫結束後 4 秒自動進入下一幕（最後動畫 tap-hint 在 5.7s 完成）
-  setTimeout(advanceFromSplash, 7700);
-
-  // 點擊可提前跳過
+  // 點擊 splash 可提前跳過（Google page 消失後才有效）
   splash.addEventListener('click', advanceFromSplash);
 
   /* ── Step 2: Close top menu → show login invite ── */
