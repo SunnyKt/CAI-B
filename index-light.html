@@ -127,22 +127,30 @@
                     <div class="hero-banner__card">
                         <!-- AI Avatar SVG -->
                         <div class="hero-banner__ai">
-                            <svg width="100%" height="100%" viewBox="0 0 56 56" xmlns="http://www.w3.org/2000/svg">
-                                <circle cx="28" cy="28" r="27" fill="#00A19B" opacity="0.15"></circle>
-                                <circle cx="28" cy="28" r="27" fill="none" stroke="#00A19B" stroke-width="1.0" stroke-dasharray="4 3" class="av-spin" style="transform-origin:28px 28px;"></circle>
-                                <circle cx="28" cy="28" r="14" fill="none" stroke="#00A19B" stroke-width="0.8" class="av-ring av-ring-idle1"></circle>
-                                <circle cx="28" cy="28" r="14" fill="none" stroke="#009690" stroke-width="0.6" class="av-ring av-ring-idle2"></circle>
-                                <circle cx="28" cy="28" r="14" fill="none" stroke="#007A75" stroke-width="0.5" class="av-ring av-ring-idle3"></circle>
-                                <circle cx="28" cy="28" r="18" fill="#00A19B" class="av-scale-idle av-op-idle" style="--op-lo:0.06;--op-hi:0.18"></circle>
-                                <circle cx="28" cy="28" r="11" fill="#00A19B" class="av-scale-idle av-op-idle" style="--op-lo:0.12;--op-hi:0.28"></circle>
-                                <circle cx="28" cy="28" r="6"  fill="#00A19B" class="av-scale-idle av-op-idle" style="--op-lo:0.28;--op-hi:0.50"></circle>
-                                <circle cx="28" cy="28" r="3"  fill="#00A19B" class="av-scale-idle av-core-norm"></circle>
-                                <circle cx="28" cy="28" r="1.3" fill="#00D4CE"></circle>
-                                <circle cx="11" cy="10" r="1.2" fill="#00A19B" style="--tw:2.4s;--td:0s"   class="av-twinkle"></circle>
-                                <circle cx="45" cy="8"  r="0.9" fill="#009690" style="--tw:3.0s;--td:.6s"  class="av-twinkle"></circle>
-                                <circle cx="48" cy="40" r="1.1" fill="#00A19B" style="--tw:1.9s;--td:1.2s" class="av-twinkle"></circle>
-                                <circle cx="8"  cy="42" r="0.9" fill="#009690" style="--tw:2.7s;--td:.3s"  class="av-twinkle"></circle>
-                                <circle cx="33" cy="4"  r="0.8" fill="#00A19B" style="--tw:3.3s;--td:.9s"  class="av-twinkle"></circle>
+                            <svg width="100%" height="100%" viewBox="0 0 56 56" xmlns="http://www.w3.org/2000/svg" overflow="visible">
+                                <!-- 外層光暈 Outer glow -->
+                                <circle cx="28" cy="28" r="25" fill="#00A19B" class="av-scale-idle av-op-idle" style="--op-lo:0.03;--op-hi:0.09"></circle>
+                                <!-- 呼吸層 Breathing layers -->
+                                <circle cx="28" cy="28" r="19" fill="#00A19B" class="av-scale-idle av-op-idle" style="--op-lo:0.07;--op-hi:0.18"></circle>
+                                <circle cx="28" cy="28" r="12" fill="#00A19B" class="av-scale-idle av-op-idle" style="--op-lo:0.14;--op-hi:0.32"></circle>
+                                <circle cx="28" cy="28" r="6.5" fill="#00A19B" class="av-scale-idle av-op-idle" style="--op-lo:0.30;--op-hi:0.55"></circle>
+                                <!-- 旋轉虛線環 Spinning ring -->
+                                <circle cx="28" cy="28" r="22" fill="none" stroke="#00A19B" stroke-width="0.5" stroke-dasharray="4 3" class="av-spin" style="transform-origin:28px 28px;"></circle>
+                                <!-- 水波紋 Ripple rings（從內擴散至旋轉環外） -->
+                                <circle cx="28" cy="28" r="15" fill="none" stroke="#00A19B" stroke-width="0.9" class="av-ring av-ring-idle1"></circle>
+                                <circle cx="28" cy="28" r="15" fill="none" stroke="#009690" stroke-width="0.7" class="av-ring av-ring-idle2"></circle>
+                                <circle cx="28" cy="28" r="15" fill="none" stroke="#007A75" stroke-width="0.5" class="av-ring av-ring-idle3"></circle>
+                                <!-- 核心 Core -->
+                                <circle cx="28" cy="28" r="3.2" fill="#00A19B" class="av-scale-idle av-core-norm"></circle>
+                                <circle cx="28" cy="28" r="1.4" fill="#00D4CE"></circle>
+                                <!-- 星點 Stars -->
+                                <circle cx="10" cy="8"  r="1.2" fill="#7FD4D0" style="--tw:2.4s;--td:0s"   class="av-twinkle"></circle>
+                                <circle cx="47" cy="7"  r="0.9" fill="#00C4BE" style="--tw:3.0s;--td:.6s"  class="av-twinkle"></circle>
+                                <circle cx="50" cy="39" r="1.1" fill="#7FD4D0" style="--tw:1.9s;--td:1.2s" class="av-twinkle"></circle>
+                                <circle cx="6"  cy="41" r="0.9" fill="#00BFB8" style="--tw:2.7s;--td:.3s"  class="av-twinkle"></circle>
+                                <circle cx="35" cy="3"  r="0.8" fill="#7FD4D0" style="--tw:3.3s;--td:.9s"  class="av-twinkle"></circle>
+                                <circle cx="50" cy="21" r="0.8" fill="#00C4BE" style="--tw:2.6s;--td:1.5s" class="av-twinkle"></circle>
+                                <circle cx="5"  cy="22" r="0.7" fill="#7FD4D0" style="--tw:3.1s;--td:.4s"  class="av-twinkle"></circle>
                             </svg>
                         </div>
                     </div>
@@ -520,16 +528,25 @@
 
                                     <!-- Panel 2：帳單明細 (hidden) -->
                                     <div class="bill-card__panel" data-panel-id="2" style="display:none">
-                                        <div class="bill-card__search">
-                                            <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><circle cx="6.5" cy="6.5" r="4.5" stroke="#acacac" stroke-width="1.4"/><path d="M10 10L13 13" stroke="#acacac" stroke-width="1.4" stroke-linecap="round"/></svg>
-                                            <input class="bill-card__search-input" type="text" placeholder="搜尋消費明細">
+
+                                        <!-- 查詢帳單 Header -->
+                                        <div class="bill-card__query-header">
+                                            <span class="bill-card__query-title">查詢帳單</span>
+                                            <button class="bill-card__clear-filters" id="billClearFilters">取消篩選</button>
                                         </div>
-                                        <div class="bill-card__filters">
-                                            <button class="bill-card__filter" data-filter="card">卡別 <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 3.5l3 3 3-3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
-                                            <button class="bill-card__filter" data-filter="side">正副卡 <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 3.5l3 3 3-3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
-                                            <button class="bill-card__filter" data-filter="date">日期 <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 3.5l3 3 3-3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
-                                            <button class="bill-card__filter" data-filter="currency">幣別 <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 3.5l3 3 3-3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+
+                                        <!-- 搜尋列 + 進階搜尋按鈕 -->
+                                        <div class="bill-card__search-row">
+                                            <div class="bill-card__search">
+                                                <svg width="32" height="32" viewBox="0 0 32 32" fill="none"><circle cx="13.5" cy="13.5" r="7.5" stroke="#7c7c7c" stroke-width="1.5"/><path d="M20 20L26 26" stroke="#7c7c7c" stroke-width="1.5" stroke-linecap="round"/></svg>
+                                                <input class="bill-card__search-input" type="text" placeholder="請輸入商店名稱或金額">
+                                            </div>
+                                            <button class="bill-card__advanced-search-btn" id="billAdvancedSearch">進階搜尋</button>
                                         </div>
+
+                                        <!-- 已選篩選 chips（動態新增） -->
+                                        <div class="bill-card__filters" id="billFiltersRow"></div>
+
                                         <div class="bill-card__txs">
 
                                             <!-- 2025 年群組 -->
@@ -1346,6 +1363,25 @@
                 <div class="filter-picker__item" data-label="幣別" data-value="港幣">港幣</div>
                 <div class="filter-picker__item" data-label="幣別" data-value="人民幣">人民幣</div>
                 <div class="filter-picker__item" data-label="幣別" data-value="澳幣">澳幣</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 篩選條件選單 -->
+    <div class="filter-overlay" id="filterMenuOverlay" aria-hidden="true">
+        <div class="filter-picker">
+            <div class="filter-picker__header">
+                <span class="filter-picker__title">篩選條件</span>
+                <button class="filter-picker__close" aria-label="關閉">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><line x1="2.5" y1="2.5" x2="13.5" y2="13.5" stroke="#1C1C1C" stroke-width="1.5" stroke-linecap="round"/><line x1="13.5" y1="2.5" x2="2.5" y2="13.5" stroke="#1C1C1C" stroke-width="1.5" stroke-linecap="round"/></svg>
+                </button>
+            </div>
+            <div class="filter-picker__list">
+                <div class="filter-picker__item filter-menu__item is-selected" data-filter="all">全部顯示</div>
+                <div class="filter-picker__item filter-menu__item" data-filter="card">卡別</div>
+                <div class="filter-picker__item filter-menu__item" data-filter="side">正副卡</div>
+                <div class="filter-picker__item filter-menu__item" data-filter="date">日期</div>
+                <div class="filter-picker__item filter-menu__item" data-filter="currency">幣別</div>
             </div>
         </div>
     </div>

@@ -543,10 +543,12 @@ p {
 /* AI Avatar SVG */
 .hero-banner__ai {
     position: absolute;
-    top: 4.3rem;
-    left: 4.3rem;
-    width: 8.8rem;
-    height: 8.8rem;
+    top: 2.3rem;
+    left: 2.3rem;
+    width: 11.8rem;
+    height: 11.8rem;
+    animation: av-float-y 5s ease-in-out infinite;
+    overflow: visible;
 }
 
 /* ----- Avatar Animation Classes ----- */
@@ -560,8 +562,9 @@ p {
 .av-core-norm  { animation: av-core-color 3s   ease-in-out infinite; }
 .av-twinkle    { animation: av-twinkle    var(--tw, 2.5s) ease-in-out var(--td, 0s) infinite; }
 
+@keyframes av-float-y     { 0%, 100% { transform: translateY(0) }  50% { transform: translateY(-7px) } }
 @keyframes av-spin        { from { stroke-dashoffset: 0 } to { stroke-dashoffset: -62 } }
-@keyframes av-pulse-ring  { 0% { transform: scale(0.8); opacity: 0.65 } 100% { transform: scale(2.0); opacity: 0 } }
+@keyframes av-pulse-ring  { 0% { transform: scale(0.75); opacity: 0.70 } 100% { transform: scale(2.4); opacity: 0 } }
 @keyframes av-scale       { 0%, 100% { transform: scale(1) }   50% { transform: scale(1.22) } }
 @keyframes av-op-idle     { 0%, 100% { opacity: var(--op-lo, .1) } 50% { opacity: var(--op-hi, .25) } }
 @keyframes av-core-color  { 0%, 100% { fill: #00A19B } 50% { fill: #00D4CE } }
@@ -1489,21 +1492,53 @@ p {
     color: #00875a;
 }
 
-/* Tab 3 — 搜尋 */
+/* Tab 3 — 查詢帳單 Header Row */
+.bill-card__query-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 2rem 1.2rem;
+    width: 100%;
+}
+
+.bill-card__query-title {
+    font-family: var(--font-zh);
+    font-size: 2rem;
+    font-weight: 700;
+    color: #1c1c1c;
+}
+
+.bill-card__clear-filters {
+    font-family: var(--font-zh);
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #007a7a;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    line-height: 1.5;
+}
+
+/* Tab 3 — 搜尋列包層 */
+.bill-card__search-row {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+    padding: 0 2rem;
+    width: 100%;
+}
+
+/* Tab 3 — 搜尋欄（底線樣式） */
 .bill-card__search {
     display: flex;
     align-items: center;
-    gap: 0.8rem;
-    padding: 0.8rem 1.2rem;
-    border: 1px solid #e1efef;
-    border-radius: 2rem;
-    background: #f8f8f8;
-    width: calc(100% - 4rem);
-}
-
-.bill-card__search-placeholder {
-    font-size: 1.4rem;
-    color: #acacac;
+    gap: 0.2rem;
+    flex: 1;
+    padding-bottom: 0.2rem;
+    border-bottom: 1px solid #acacac;
+    background: transparent;
+    min-width: 0;
 }
 
 .bill-card__search-input {
@@ -1512,73 +1547,69 @@ p {
     outline: none;
     background: transparent;
     font-family: var(--font-zh);
-    font-size: 1.4rem;
+    font-size: 1.6rem;
     color: #1c1c1c;
     padding: 0;
     min-width: 0;
 }
 
 .bill-card__search-input::placeholder {
-    color: #acacac;
+    color: #7c7c7c;
 }
 
-/* Tab 3 — 篩選 chips */
+/* Tab 3 — 進階搜尋按鈕 */
+.bill-card__advanced-search-btn {
+    flex-shrink: 0;
+    height: 3rem;
+    padding: 0 1.6rem;
+    border: 0.5px solid #85d0ce;
+    border-radius: 4rem;
+    background: #cbe9e9;
+    font-family: var(--font-zh);
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #005154;
+    cursor: pointer;
+    white-space: nowrap;
+    box-shadow: 0px 4px 16px rgba(90,125,188,0.05), 0px 0px 4px rgba(25,112,108,0.27);
+    line-height: 3rem;
+}
+
+/* Tab 3 — 篩選 chips（動態，只顯示已選項目） */
 .bill-card__filters {
     display: flex;
     gap: 0.6rem;
-    overflow-x: auto;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
+    flex-wrap: wrap;
+    padding: 0 2rem ;
+    min-height: 0;
     width: 100%;
-    flex-wrap:wrap;
 }
 
-.bill-card__filters::-webkit-scrollbar { display: none; }
+.bill-card__filters:empty { display: none; }
 
 .bill-card__filter {
     display: inline-flex;
     align-items: center;
-    gap: 0.3rem;
+    gap: 0.5rem;
     padding: 0.4rem 1rem;
-    border: 1px solid #c8cfcf;
+    border: 1px solid var(--color-primary);
     border-radius: 2rem;
     font-family: var(--font-zh);
-    font-size: 1.3rem;
-    color: #555;
-    background: var(--color-white);
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: var(--color-primary);
+    background: #e1efef;
     cursor: pointer;
     white-space: nowrap;
     flex-shrink: 0;
-    transition: background-color 0.15s;
 }
 
-.bill-card__filter:hover { background: #f0f0f0; }
+.bill-card__filter svg { flex-shrink: 0; }
 
-.bill-card__filter.is-active {
-    background: #e1efef;
-    border-color: var(--color-primary);
-    color: var(--color-primary);
-    font-weight: 600;
-}
-
-/* Tab 3 — 消費列表（負 margin 抵消 panel 的 2rem 內距，使項目滿版）*/
+/* Tab 3 — 消費列表 */
 .bill-card__panel[data-panel-id="2"] {
     padding: 2rem 0 0;
 }
-
-.bill-card__panel[data-panel-id="2"] .bill-card__search{
-    padding-left: 2rem;
-    padding-right: 2rem;
-}
-.bill-card__panel[data-panel-id="2"] .bill-card__filters {
-    padding-left: 2.2rem;
-    padding-right: 2.2rem;
-}
-
-/* .bill-card__panel[data-panel-id="2"] .bill-card__filters {
-    padding-left: 2rem;
-    padding-right: 2rem;
-} */
 
 .bill-card__txs {
     display: flex;

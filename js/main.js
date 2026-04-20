@@ -33,18 +33,19 @@ $(function () {
     });
 
     /* ----- 子選單分頁切換 Sub Menu Tab Switch ----- */
-    $('.sub-menu__item').on('click', function () {
-        var tab     = parseInt($(this).data('tab'), 10);
+    var totalTabs = $('.sub-menu__item').length; // 3
+
+    function switchToTab(tab) {
         var $next    = $('.hot-menu[data-tab-panel="' + tab + '"]');
         var $current = $('.hot-menu.is-active');
         if ($current.is($next)) return;
 
         var currentTab = parseInt($('.sub-menu__item.is-active').data('tab'), 10);
-        var goRight    = tab > currentTab; // true = 向右切換
+        var goRight    = tab > currentTab;
 
         // 更新 tab 按鈕
         $('.sub-menu__item').removeClass('is-active');
-        $(this).addClass('is-active');
+        $('.sub-menu__item[data-tab="' + tab + '"]').addClass('is-active');
 
         // 把新面板放到畫面外（不帶動畫）
         $next.css('transition', 'none')
@@ -62,6 +63,50 @@ $(function () {
         setTimeout(function () {
             $current.removeClass('slide-to-left slide-to-right');
         }, 320);
+    }
+
+    // 點擊 tab 按鈕
+    $('.sub-menu__item').on('click', function () {
+        switchToTab(parseInt($(this).data('tab'), 10));
+    });
+
+    // ----- 滑動切換 Swipe to Switch Tab -----
+    var swipeStartX = 0;
+    var swipeStartY = 0;
+    var swipeLocked = false; // 防止動畫期間再次觸發
+
+    $hotPanel.on('touchstart', function (e) {
+        var t = e.originalEvent.touches[0];
+        swipeStartX = t.clientX;
+        swipeStartY = t.clientY;
+        swipeLocked = false;
+    });
+
+    $hotPanel.on('touchend', function (e) {
+        if (swipeLocked) return;
+        var t = e.originalEvent.changedTouches[0];
+        var dx = t.clientX - swipeStartX;
+        var dy = t.clientY - swipeStartY;
+
+        // 確認是水平滑動（水平位移 > 垂直位移，且超過 50px 閾值）
+        if (Math.abs(dx) < 50 || Math.abs(dx) < Math.abs(dy)) return;
+
+        var currentTab = parseInt($('.sub-menu__item.is-active').data('tab'), 10);
+        var nextTab;
+
+        if (dx < 0) {
+            // 向左滑 → 下一個 tab
+            nextTab = Math.min(currentTab + 1, totalTabs - 1);
+        } else {
+            // 向右滑 → 上一個 tab
+            nextTab = Math.max(currentTab - 1, 0);
+        }
+
+        if (nextTab === currentTab) return;
+        swipeLocked = true;
+        switchToTab(nextTab);
+
+        setTimeout(function () { swipeLocked = false; }, 350);
     });
 
     /* ----- 點選單外部關閉 Click Outside to Close ----- */
@@ -530,22 +575,41 @@ $(function () {
         currency: '#filterCurrencyOverlay'
     };
 
-    var filterDefaultLabel = {
-        card:     '卡別',
-        side:     '正副卡',
-        date:     '日期',
-        currency: '幣別'
-    };
+    // 記錄各篩選的目前狀態（預設值視為「未篩選」）
+    var filterState = { card: null, side: null, date: null, currency: null };
 
-    var SVG_CHEVRON = '<svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 3.5l3 3 3-3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-    var SVG_CLOSE   = '<svg width="10" height="10" viewBox="0 0 10 10" fill="none"><line x1="2" y1="2" x2="8" y2="8" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><line x1="8" y1="2" x2="2" y2="8" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>';
-
-    function setFilterActive($btn, filterKey, label) {
-        $btn.html(label + ' ' + SVG_CLOSE).addClass('is-active');
+    function updateClearFiltersBtn() {
+        var anyActive = Object.keys(filterState).some(function (k) {
+            return filterState[k] !== null;
+        });
+        $('#billClearFilters').css('opacity', anyActive ? '1' : '0.4');
     }
 
-    function resetFilter($btn, filterKey) {
-        $btn.html(filterDefaultLabel[filterKey] + ' ' + SVG_CHEVRON).removeClass('is-active');
+    var SVG_CLOSE_CHIP = '<svg width="10" height="10" viewBox="0 0 10 10" fill="none"><line x1="2" y1="2" x2="8" y2="8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><line x1="8" y1="2" x2="2" y2="8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>';
+
+    function setFilterActive(filterKey, label) {
+        filterState[filterKey] = label;
+        // 新增或更新 chip
+        var $existing = $('#billFiltersRow .bill-card__filter[data-filter="' + filterKey + '"]');
+        if ($existing.length) {
+            $existing.html(label + ' ' + SVG_CLOSE_CHIP);
+        } else {
+            $('#billFiltersRow').append(
+                '<button class="bill-card__filter" data-filter="' + filterKey + '">' +
+                label + ' ' + SVG_CLOSE_CHIP +
+                '</button>'
+            );
+        }
+        // 在篩選條件選單中標記該項目為已選
+        $('#filterMenuOverlay .filter-menu__item[data-filter="' + filterKey + '"]').addClass('is-selected');
+        $('#filterMenuOverlay .filter-menu__item[data-filter="all"]').removeClass('is-selected');
+        updateClearFiltersBtn();
+    }
+
+    function resetFilter(filterKey) {
+        filterState[filterKey] = null;
+        // 移除 chip
+        $('#billFiltersRow .bill-card__filter[data-filter="' + filterKey + '"]').remove();
         // 重設 popup 列表選取回第一項
         var $list = $(filterOverlayMap[filterKey]).find('.filter-picker__list');
         $list.find('.filter-picker__item').removeClass('is-selected');
@@ -555,34 +619,66 @@ $(function () {
             $('#filterDateFrom').val('2024-07-01');
             $('#filterDateTo').val('2025-01-01');
         }
+        // 若全部篩選都已清除，選單回到「全部顯示」
+        var anyActive = Object.keys(filterState).some(function (k) { return filterState[k] !== null; });
+        if (!anyActive) {
+            $('#filterMenuOverlay .filter-menu__item').removeClass('is-selected');
+            $('#filterMenuOverlay .filter-menu__item[data-filter="all"]').addClass('is-selected');
+        }
+        updateClearFiltersBtn();
     }
 
-    // 點篩選 chip：已 active → 取消篩選；未 active → 開啟 popup
-    $(document).on('click', '.bill-card__filter', function () {
-        var filter = $(this).data('filter');
-        if ($(this).hasClass('is-active')) {
-            resetFilter($(this), filter);
-            return;
-        }
-        var overlayId = filterOverlayMap[filter];
-        if (!overlayId) return;
-        $(overlayId).addClass('is-open').attr('aria-hidden', 'false');
+    function resetAllFilters() {
+        Object.keys(filterState).forEach(function (k) { resetFilter(k); });
+    }
+
+    // 點篩選 chip → 清除該篩選
+    $(document).on('click', '#billFiltersRow .bill-card__filter', function () {
+        resetFilter($(this).data('filter'));
     });
 
-    // 關閉：點遮罩
+    // 進階搜尋按鈕 → 開啟篩選條件選單
+    $(document).on('click', '#billAdvancedSearch', function () {
+        $('#filterMenuOverlay').addClass('is-open').attr('aria-hidden', 'false');
+    });
+
+    // 取消篩選 → 清除所有篩選
+    $(document).on('click', '#billClearFilters', function () {
+        resetAllFilters();
+    });
+
+    // 篩選條件選單：點選項目
+    $(document).on('click', '.filter-menu__item', function () {
+        var filter = $(this).data('filter');
+        // 先關閉選單
+        $('#filterMenuOverlay').removeClass('is-open').attr('aria-hidden', 'true');
+
+        if (filter === 'all') {
+            resetAllFilters();
+            return;
+        }
+        // 延遲一小段再開對應 overlay，視覺上更流暢
+        var overlayId = filterOverlayMap[filter];
+        if (!overlayId) return;
+        setTimeout(function () {
+            $(overlayId).addClass('is-open').attr('aria-hidden', 'false');
+        }, 200);
+    });
+
+    // 關閉：點遮罩背景
     $(document).on('click', '.filter-overlay', function (e) {
         if (!$(e.target).closest('.filter-picker').length) {
             $(this).removeClass('is-open').attr('aria-hidden', 'true');
         }
     });
 
-    // 關閉：X 按鈕（popup 的關閉按鈕，非 chip 的 X）
+    // 關閉：X 按鈕
     $(document).on('click', '.filter-picker__close', function () {
         $(this).closest('.filter-overlay').removeClass('is-open').attr('aria-hidden', 'true');
     });
 
-    // 選取列表項目 → 更新 filter chip，關閉
-    $(document).on('click', '.filter-picker__item', function () {
+    // 選取各篩選 popup 的列表項目 → 記錄狀態，關閉
+    $(document).on('click', '.filter-picker__item:not(.filter-menu__item)', function () {
         var value    = $(this).data('value');
         var $list    = $(this).closest('.filter-picker__list');
         var $overlay = $(this).closest('.filter-overlay');
@@ -593,13 +689,12 @@ $(function () {
         var filterKey = Object.keys(filterOverlayMap).find(function (k) {
             return filterOverlayMap[k] === '#' + $overlay.attr('id');
         });
-        var $btn = $('.bill-card__filter[data-filter="' + filterKey + '"]');
-        var isDefault = (value === '全部顯示' || value === '全部');
 
+        var isDefault = (value === '全部顯示' || value === '全部');
         if (isDefault) {
-            resetFilter($btn, filterKey);
+            resetFilter(filterKey);
         } else {
-            setFilterActive($btn, filterKey, value);
+            setFilterActive(filterKey, value);
         }
 
         setTimeout(function () {
@@ -611,15 +706,17 @@ $(function () {
     $('#filterDateConfirm').on('click', function () {
         var from = $('#filterDateFrom').val();
         var to   = $('#filterDateTo').val();
-        var $btn = $('.bill-card__filter[data-filter="date"]');
 
         if (from && to) {
             var label = from.replace(/-/g, '/') + '～' + to.replace(/-/g, '/');
-            setFilterActive($btn, 'date', label);
+            setFilterActive('date', label);
         }
 
         $('#filterDateOverlay').removeClass('is-open').attr('aria-hidden', 'true');
     });
+
+    // 初始化取消篩選按鈕狀態
+    updateClearFiltersBtn();
 
     /* ============================== */
     /* 約定條款 Terms Popup            */
